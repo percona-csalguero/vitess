@@ -431,10 +431,10 @@ func (tkn *Tokenizer) scanIdentifier() (int, []byte) {
 func (tkn *Tokenizer) scanLiteralIdentifier() (int, []byte) {
 	buffer := &bytes.Buffer{}
 	buffer.WriteByte(byte(tkn.lastChar))
-	if !isLetter(tkn.lastChar) {
+	if !isPermittedQuotedChar(tkn.lastChar) {
 		return LEX_ERROR, buffer.Bytes()
 	}
-	for tkn.next(); isLetter(tkn.lastChar) || isDigit(tkn.lastChar); tkn.next() {
+	for tkn.next(); isPermittedQuotedChar(tkn.lastChar); tkn.next() {
 		buffer.WriteByte(byte(tkn.lastChar))
 	}
 	if tkn.lastChar != '`' {
@@ -627,4 +627,8 @@ func digitVal(ch uint16) int {
 
 func isDigit(ch uint16) bool {
 	return '0' <= ch && ch <= '9'
+}
+
+func isPermittedQuotedChar(ch uint16) bool {
+	return '\x01' <= ch && ch <= '\x5f' || '\x61' <= ch && ch <= '\x7f'
 }

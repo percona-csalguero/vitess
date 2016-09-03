@@ -641,7 +641,19 @@ func TestCaseSensitivity(t *testing.T) {
 		output: "select next value from t",
 	}, {
 		input: "select /* use */ 1 from t1 use index (A) where b = 1",
-	}}
+	},
+		// Db, tables and field names can have special chars
+		// http://dev.mysql.com/doc/refman/5.7/en/identifiers.html
+		{
+			input:  "select `1a` from t",
+			output: "select 1a from t",
+		}, {
+			input:  "select `:table` from t",
+			output: "select :table from t",
+		}, {
+			input:  "select `table:` from t",
+			output: "select table: from t",
+		}}
 	for _, tcase := range validSQL {
 		if tcase.output == "" {
 			tcase.output = tcase.input
@@ -674,15 +686,6 @@ func TestErrors(t *testing.T) {
 	}, {
 		input:  "select 078 from t",
 		output: "syntax error at position 11 near '078'",
-	}, {
-		input:  "select `1a` from t",
-		output: "syntax error at position 9 near '1'",
-	}, {
-		input:  "select `:table` from t",
-		output: "syntax error at position 9 near ':'",
-	}, {
-		input:  "select `table:` from t",
-		output: "syntax error at position 14 near 'table'",
 	}, {
 		input:  "select 'aa\\",
 		output: "syntax error at position 12 near 'aa'",
