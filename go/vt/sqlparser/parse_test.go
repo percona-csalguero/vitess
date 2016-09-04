@@ -641,6 +641,9 @@ func TestCaseSensitivity(t *testing.T) {
 		output: "select next value from t",
 	}, {
 		input: "select /* use */ 1 from t1 use index (A) where b = 1",
+	}, {
+		input:  "select 1 from t # comment lock in SHARE MODE",
+		output: "select 1 from t",
 	}}
 	for _, tcase := range validSQL {
 		if tcase.output == "" {

@@ -355,6 +355,9 @@ func (tkn *Tokenizer) Scan() (int, []byte) {
 				return tkn.scanCommentType1("--")
 			}
 			return int(ch), nil
+		case '#':
+			tkn.next()
+			return tkn.scanCommentType1("#")
 		case '<':
 			switch tkn.lastChar {
 			case '>':
